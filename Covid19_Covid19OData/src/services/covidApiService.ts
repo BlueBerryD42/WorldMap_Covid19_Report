@@ -1,5 +1,5 @@
 // OData API service for COVID data
-const API_BASE_URL = 'http://localhost:5236/api'; // Update this to match your API URL
+const API_BASE_URL = 'http://localhost:5236/odata'; // Update this to match your API URL
 
 export interface CovidDataDto {
   country: string;
@@ -47,7 +47,7 @@ class CovidApiService {
   }
 
   async getAllCovidData(): Promise<CovidDataDto[]> {
-    const url = `${API_BASE_URL}/CovidData/all`;
+    const url = `${API_BASE_URL}/CovidData`;
     return this.fetchWithErrorHandling<CovidDataDto[]>(url);
   }
 
@@ -62,49 +62,104 @@ class CovidApiService {
   }
 
   async getCountrySummaries(): Promise<CountrySummaryDto[]> {
-    const url = `${API_BASE_URL}/CovidData/summaries`;
+    const url = `${API_BASE_URL}/CountrySummaries`;
     return this.fetchWithErrorHandling<CountrySummaryDto[]>(url);
   }
 
   async getCountrySummariesByDate(date: string): Promise<CountrySummaryDto[]> {
-    const url = `${API_BASE_URL}/CovidData/summaries/by-date/${date}`;
+    const url = `${API_BASE_URL}/CountrySummaries?$filter=Date eq '${date}'`;
     return this.fetchWithErrorHandling<CountrySummaryDto[]>(url);
   }
 
   async getCountrySummariesAsDictionary(): Promise<Record<string, CountrySummaryDto>> {
-    const url = `${API_BASE_URL}/CovidData/summaries/dictionary`;
-    return this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    const data = await this.getCountrySummaries();
+    return data.reduce((dict, item) => {
+      dict[item.country] = item;
+      return dict;
+    }, {} as Record<string, CountrySummaryDto>);
   }
 
   async getCountrySummariesByDateAsDictionary(date: string): Promise<Record<string, CountrySummaryDto>> {
-    const url = `${API_BASE_URL}/CovidData/summaries/dictionary/by-date/${date}`;
-    return this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    const data = await this.getCountrySummariesByDate(date);
+    return data.reduce((dict, item) => {
+      dict[item.country] = item;
+      return dict;
+    }, {} as Record<string, CountrySummaryDto>);
   }
 
-  // Individual data type endpoints
+  // Individual data type endpoints (separate OData endpoints for efficiency)
   async getConfirmedData(): Promise<Record<string, { country: string; value: number }>> {
-    const url = `${API_BASE_URL}/CovidData/confirmed`;
-    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+    const url = `${API_BASE_URL}/Confirmed`;
+    const data = await this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    return this.convertDictionaryToApiFormat(data, 'confirmed');
   }
 
   async getActiveData(): Promise<Record<string, { country: string; value: number }>> {
-    const url = `${API_BASE_URL}/CovidData/active`;
-    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+    const url = `${API_BASE_URL}/Active`;
+    const data = await this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    return this.convertDictionaryToApiFormat(data, 'active');
   }
 
   async getRecoveredData(): Promise<Record<string, { country: string; value: number }>> {
-    const url = `${API_BASE_URL}/CovidData/recovered`;
-    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+    const url = `${API_BASE_URL}/Recovered`;
+    const data = await this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    return this.convertDictionaryToApiFormat(data, 'recovered');
   }
 
   async getDeathsData(): Promise<Record<string, { country: string; value: number }>> {
-    const url = `${API_BASE_URL}/CovidData/deaths`;
-    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+    const url = `${API_BASE_URL}/Deaths`;
+    const data = await this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    return this.convertDictionaryToApiFormat(data, 'deaths');
   }
 
   async getDailyData(): Promise<Record<string, { country: string; value: number }>> {
-    const url = `${API_BASE_URL}/CovidData/daily`;
-    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+    const url = `${API_BASE_URL}/Daily`;
+    const data = await this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+    return this.convertDictionaryToApiFormat(data, 'dailyIncrease');
+  }
+
+  private convertToApiFormat(data: CountrySummaryDto[], dataType: string): Record<string, { country: string; value: number }> {
+    const result: Record<string, { country: string; value: number }> = {};
+    
+    data.forEach(item => {
+      let value = 0;
+      switch (dataType) {
+        case 'confirmed': value = item.confirmed; break;
+        case 'active': value = item.active; break;
+        case 'recovered': value = item.recovered; break;
+        case 'deaths': value = item.deaths; break;
+        case 'dailyIncrease': value = item.dailyIncrease; break;
+      }
+      
+      result[item.country] = {
+        country: item.country,
+        value: value
+      };
+    });
+    
+    return result;
+  }
+
+  private convertDictionaryToApiFormat(data: Record<string, CountrySummaryDto>, dataType: string): Record<string, { country: string; value: number }> {
+    const result: Record<string, { country: string; value: number }> = {};
+    
+    Object.entries(data).forEach(([country, item]) => {
+      let value = 0;
+      switch (dataType) {
+        case 'confirmed': value = item.confirmed; break;
+        case 'active': value = item.active; break;
+        case 'recovered': value = item.recovered; break;
+        case 'deaths': value = item.deaths; break;
+        case 'dailyIncrease': value = item.dailyIncrease; break;
+      }
+      
+      result[country] = {
+        country: country,
+        value: value
+      };
+    });
+    
+    return result;
   }
 
   // OData query methods
@@ -114,7 +169,7 @@ class CovidApiService {
   }
 
   async getCountrySummariesWithODataQuery(query: string): Promise<CountrySummaryDto[]> {
-    const url = `${API_BASE_URL}/CovidData/summaries?${query}`;
+    const url = `${API_BASE_URL}/CountrySummaries?${query}`;
     return this.fetchWithErrorHandling<CountrySummaryDto[]>(url);
   }
 }

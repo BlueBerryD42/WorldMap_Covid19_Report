@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OData_CovidDeath")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f69a37fc267f33c4fb33a472e8949f26f395d70a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9357ebd7da36bcc3dcc53357bacf441029f8d7c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("OData_CovidDeath")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OData_CovidDeath")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

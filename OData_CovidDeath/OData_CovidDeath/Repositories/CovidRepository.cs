@@ -105,26 +105,29 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetConfirmedDataAsync()
         {
-            // Sum all daily values across all dates for each country
+            // Sum all daily values across all dates for each country, only return countries with data
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
                         group dm by l.Country_Region into g
                         select new CountrySummaryDto
                         {
                             Country = g.Key,
-                            Confirmed = g.Sum(x => x.Confirmed), // Sum of all daily confirmed cases
+                            Confirmed = g.Sum(x => x.Confirmed),
                             Deaths = 0,
                             Recovered = 0,
                             Active = 0,
                             DailyIncrease = 0
                         };
 
-            return await query.ToListAsync();
+            var results = await query.ToListAsync();
+            
+            // Filter out countries with zero confirmed cases on the client side
+            return results.Where(r => r.Confirmed > 0);
         }
 
         public async Task<IEnumerable<CountrySummaryDto>> GetDeathsDataAsync()
         {
-            // Sum all daily values across all dates for each country
+            // Sum all daily values across all dates for each country, only return countries with data
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
                         group dm by l.Country_Region into g
@@ -132,18 +135,21 @@ namespace OData_CovidDeath.Repositories
                         {
                             Country = g.Key,
                             Confirmed = 0,
-                            Deaths = g.Sum(x => x.Deaths), // Sum of all daily deaths
+                            Deaths = g.Sum(x => x.Deaths),
                             Recovered = 0,
                             Active = 0,
                             DailyIncrease = 0
                         };
 
-            return await query.ToListAsync();
+            var results = await query.ToListAsync();
+            
+            // Filter out countries with zero deaths on the client side
+            return results.Where(r => r.Deaths > 0);
         }
 
         public async Task<IEnumerable<CountrySummaryDto>> GetRecoveredDataAsync()
         {
-            // Sum all daily values across all dates for each country
+            // Sum all daily values across all dates for each country, only return countries with data
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
                         group dm by l.Country_Region into g
@@ -152,17 +158,20 @@ namespace OData_CovidDeath.Repositories
                             Country = g.Key,
                             Confirmed = 0,
                             Deaths = 0,
-                            Recovered = g.Sum(x => x.Recovered), // Sum of all daily recovered cases
+                            Recovered = g.Sum(x => x.Recovered),
                             Active = 0,
                             DailyIncrease = 0
                         };
 
-            return await query.ToListAsync();
+            var results = await query.ToListAsync();
+            
+            // Filter out countries with zero recovered cases on the client side
+            return results.Where(r => r.Recovered > 0);
         }
 
         public async Task<IEnumerable<CountrySummaryDto>> GetActiveDataAsync()
         {
-            // Sum all daily values across all dates for each country
+            // Sum all daily values across all dates for each country, only return countries with data
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
                         group dm by l.Country_Region into g
@@ -172,11 +181,14 @@ namespace OData_CovidDeath.Repositories
                             Confirmed = 0,
                             Deaths = 0,
                             Recovered = 0,
-                            Active = g.Sum(x => x.Active), // Sum of all daily active cases
+                            Active = g.Sum(x => x.Active),
                             DailyIncrease = 0
                         };
 
-            return await query.ToListAsync();
+            var results = await query.ToListAsync();
+            
+            // Filter out countries with zero active cases on the client side
+            return results.Where(r => r.Active > 0);
         }
 
         public async Task<IEnumerable<CountrySummaryDto>> GetDailyIncreaseDataAsync()
@@ -211,15 +223,19 @@ namespace OData_CovidDeath.Repositories
                 var averageDailyIncrease = dailyIncreases.Count > 0 ? 
                     (long)dailyIncreases.Average() : 0;
                 
-                result.Add(new CountrySummaryDto
+                // Only add countries with actual daily increase data
+                if (averageDailyIncrease > 0)
                 {
-                    Country = country.Country,
-                    Confirmed = 0,
-                    Deaths = 0,
-                    Recovered = 0,
-                    Active = 0,
-                    DailyIncrease = averageDailyIncrease
-                });
+                    result.Add(new CountrySummaryDto
+                    {
+                        Country = country.Country,
+                        Confirmed = 0,
+                        Deaths = 0,
+                        Recovered = 0,
+                        Active = 0,
+                        DailyIncrease = averageDailyIncrease
+                    });
+                }
             }
 
             return result;

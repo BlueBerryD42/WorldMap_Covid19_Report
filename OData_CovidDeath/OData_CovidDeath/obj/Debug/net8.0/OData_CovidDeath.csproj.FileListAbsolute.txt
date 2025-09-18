@@ -139,3 +139,8 @@ C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\ne
 C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
 C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
 C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\obj\Debug\net8.0\OData_CovidDeath.sourcelink.json
+C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\Microsoft.AspNetCore.OData.dll
+C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\Microsoft.OData.Core.dll
+C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\Microsoft.OData.Edm.dll
+C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\Microsoft.OData.ModelBuilder.dll
+C:\Users\syrex\Desktop\ODataDeath\OData_CovidDeath\OData_CovidDeath\bin\Debug\net8.0\Microsoft.Spatial.dll

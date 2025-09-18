@@ -60,6 +60,25 @@
           }
         }
       },
+      "Microsoft.AspNetCore.OData/8.0.11": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.OData.Core": "[7.12.2, 8.0.0)",
+          "Microsoft.OData.Edm": "[7.12.2, 8.0.0)",
+          "Microsoft.OData.ModelBuilder": "[1.0.8, 2.0.0)",
+          "Microsoft.Spatial": "[7.12.2, 8.0.0)"
+        },
+        "compile": {
+          "lib/net6.0/Microsoft.AspNetCore.OData.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.AspNetCore.OData.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "compile": {
@@ -882,6 +901,60 @@
           "lib/netstandard1.0/_._": {}
         }
       },
+      "Microsoft.OData.Core/7.12.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
+          "Microsoft.OData.Edm": "[7.12.2]",
+          "Microsoft.Spatial": "[7.12.2]"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/Microsoft.OData.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.OData.Core.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.OData.Edm/7.12.2": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.6.0",
+          "System.Text.Encodings.Web": "4.7.2",
+          "System.Text.Json": "4.6.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.OData.Edm.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.OData.Edm.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.OData.ModelBuilder/1.0.8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.OData.Edm": "[7.9.0, 8.0.0)",
+          "Microsoft.Spatial": "[7.9.0, 8.0.0)",
+          "System.ComponentModel.Annotations": "4.6.0"
+        },
+        "compile": {
+          "lib/net6.0/Microsoft.OData.ModelBuilder.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.OData.ModelBuilder.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.OpenApi/1.6.14": {
         "type": "package",
         "compile": {
@@ -892,6 +965,19 @@
         "runtime": {
           "lib/netstandard2.0/Microsoft.OpenApi.dll": {
             "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Microsoft.Spatial/7.12.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Spatial.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Spatial.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -1028,6 +1114,19 @@
         },
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
+        }
+      },
+      "System.ComponentModel.Annotations/4.6.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard2.1/System.ComponentModel.Annotations.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/System.ComponentModel.Annotations.dll": {
+            "related": ".xml"
+          }
         }
       },
       "System.Composition/6.0.0": {
@@ -1533,6 +1632,24 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "Microsoft.AspNetCore.OData/8.0.11": {
+      "sha512": "SsvM2w4AjiFWbls6rcbW2bdDx6cK3oAccZgBWTfhf1gjmNVNAYPizx2F9sIJJB0eBV9LRnFTxlv8P8HJz2mlJQ==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.odata/8.0.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "images/odata.png",
+        "lib/net5.0/Microsoft.AspNetCore.OData.dll",
+        "lib/net5.0/Microsoft.AspNetCore.OData.xml",
+        "lib/net6.0/Microsoft.AspNetCore.OData.dll",
+        "lib/net6.0/Microsoft.AspNetCore.OData.xml",
+        "lib/netcoreapp3.1/Microsoft.AspNetCore.OData.dll",
+        "lib/netcoreapp3.1/Microsoft.AspNetCore.OData.xml",
+        "microsoft.aspnetcore.odata.8.0.11.nupkg.sha512",
+        "microsoft.aspnetcore.odata.nuspec"
       ]
     },
     "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
@@ -3076,6 +3193,58 @@
         "runtime.json"
       ]
     },
+    "Microsoft.OData.Core/7.12.2": {
+      "sha512": "5eIw638pNESFX6ptTZO+BXnRsE3PDvB7r/bFMYbZCBHVpFukBw2aLXBgRG+hFU7nH8FaeCdOAyb2hShF2ml+cQ==",
+      "type": "package",
+      "path": "microsoft.odata.core/7.12.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.OData.Core.dll",
+        "lib/net45/Microsoft.OData.Core.xml",
+        "lib/netcoreapp3.1/Microsoft.OData.Core.dll",
+        "lib/netcoreapp3.1/Microsoft.OData.Core.xml",
+        "lib/netstandard1.1/Microsoft.OData.Core.dll",
+        "lib/netstandard1.1/Microsoft.OData.Core.xml",
+        "lib/netstandard2.0/Microsoft.OData.Core.dll",
+        "lib/netstandard2.0/Microsoft.OData.Core.xml",
+        "microsoft.odata.core.7.12.2.nupkg.sha512",
+        "microsoft.odata.core.nuspec"
+      ]
+    },
+    "Microsoft.OData.Edm/7.12.2": {
+      "sha512": "kloomMn+kiMtQeWvth02ODFDj2bmsI4MY2zagepIpq7SgwwNek1v8GxsLKyz6XTzQ71BunO7JVtPWADP1jBC7A==",
+      "type": "package",
+      "path": "microsoft.odata.edm/7.12.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.OData.Edm.dll",
+        "lib/net45/Microsoft.OData.Edm.xml",
+        "lib/netstandard1.1/Microsoft.OData.Edm.dll",
+        "lib/netstandard1.1/Microsoft.OData.Edm.xml",
+        "lib/netstandard2.0/Microsoft.OData.Edm.dll",
+        "lib/netstandard2.0/Microsoft.OData.Edm.xml",
+        "microsoft.odata.edm.7.12.2.nupkg.sha512",
+        "microsoft.odata.edm.nuspec"
+      ]
+    },
+    "Microsoft.OData.ModelBuilder/1.0.8": {
+      "sha512": "svkoLjtvdRtyAuhcBugNAmKYE3zHFXE3C2HpaRXKeuB5mVxo5DK8ZSxoox0PqiwTSFqq0hlWNy5GC1fVgQlElQ==",
+      "type": "package",
+      "path": "microsoft.odata.modelbuilder/1.0.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "images/odata.png",
+        "lib/net6.0/Microsoft.OData.ModelBuilder.dll",
+        "lib/net6.0/Microsoft.OData.ModelBuilder.xml",
+        "lib/netstandard2.0/Microsoft.OData.ModelBuilder.dll",
+        "lib/netstandard2.0/Microsoft.OData.ModelBuilder.xml",
+        "microsoft.odata.modelbuilder.1.0.8.nupkg.sha512",
+        "microsoft.odata.modelbuilder.nuspec"
+      ]
+    },
     "Microsoft.OpenApi/1.6.14": {
       "sha512": "tTaBT8qjk3xINfESyOPE2rIellPvB7qpVqiWiyA/lACVvz+xOGiXhFUfohcx82NLbi5avzLW0lx+s6oAqQijfw==",
       "type": "package",
@@ -3089,6 +3258,23 @@
         "lib/netstandard2.0/Microsoft.OpenApi.xml",
         "microsoft.openapi.1.6.14.nupkg.sha512",
         "microsoft.openapi.nuspec"
+      ]
+    },
+    "Microsoft.Spatial/7.12.2": {
+      "sha512": "jKqfHYUWyKRDH6xAiMN6IABn0kkGVsZR2BCVDG8WzOKBsKSayuBtNcWFmqjE0ibVdarIVROs48myVlAC6r1nMA==",
+      "type": "package",
+      "path": "microsoft.spatial/7.12.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.Spatial.dll",
+        "lib/net45/Microsoft.Spatial.xml",
+        "lib/netstandard1.1/Microsoft.Spatial.dll",
+        "lib/netstandard1.1/Microsoft.Spatial.xml",
+        "lib/netstandard2.0/Microsoft.Spatial.dll",
+        "lib/netstandard2.0/Microsoft.Spatial.xml",
+        "microsoft.spatial.7.12.2.nupkg.sha512",
+        "microsoft.spatial.nuspec"
       ]
     },
     "Microsoft.SqlServer.Server/1.0.0": {
@@ -3284,6 +3470,95 @@
         "system.collections.immutable.6.0.0.nupkg.sha512",
         "system.collections.immutable.nuspec",
         "useSharedDesignerContext.txt"
+      ]
+    },
+    "System.ComponentModel.Annotations/4.6.0": {
+      "sha512": "pOd+UhZ3X8xfwKDlgAzowUJNjp8VYVmOHZm++vCd0kq1HZ0zK3mNo2yRXjYgv7Ik/Xi43fmJfND2PLEsQSALCg==",
+      "type": "package",
+      "path": "system.componentmodel.annotations/4.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/net461/System.ComponentModel.Annotations.dll",
+        "lib/netcore50/System.ComponentModel.Annotations.dll",
+        "lib/netstandard1.4/System.ComponentModel.Annotations.dll",
+        "lib/netstandard2.0/System.ComponentModel.Annotations.dll",
+        "lib/netstandard2.1/System.ComponentModel.Annotations.dll",
+        "lib/netstandard2.1/System.ComponentModel.Annotations.xml",
+        "lib/portable-net45+win8/_._",
+        "lib/win8/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/net461/System.ComponentModel.Annotations.dll",
+        "ref/net461/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/System.ComponentModel.Annotations.dll",
+        "ref/netcore50/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/de/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/es/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/fr/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/it/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/ja/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/ko/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/ru/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/zh-hans/System.ComponentModel.Annotations.xml",
+        "ref/netcore50/zh-hant/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/System.ComponentModel.Annotations.dll",
+        "ref/netstandard1.1/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/de/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/es/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/fr/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/it/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/ja/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/ko/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/ru/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/zh-hans/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.1/zh-hant/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/System.ComponentModel.Annotations.dll",
+        "ref/netstandard1.3/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/de/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/es/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/fr/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/it/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/ja/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/ko/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/ru/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/zh-hans/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.3/zh-hant/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/System.ComponentModel.Annotations.dll",
+        "ref/netstandard1.4/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/de/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/es/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/fr/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/it/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/ja/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/ko/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/ru/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/zh-hans/System.ComponentModel.Annotations.xml",
+        "ref/netstandard1.4/zh-hant/System.ComponentModel.Annotations.xml",
+        "ref/netstandard2.0/System.ComponentModel.Annotations.dll",
+        "ref/netstandard2.0/System.ComponentModel.Annotations.xml",
+        "ref/netstandard2.1/System.ComponentModel.Annotations.dll",
+        "ref/netstandard2.1/System.ComponentModel.Annotations.xml",
+        "ref/portable-net45+win8/_._",
+        "ref/win8/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.componentmodel.annotations.4.6.0.nupkg.sha512",
+        "system.componentmodel.annotations.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
       ]
     },
     "System.Composition/6.0.0": {
@@ -4208,6 +4483,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Microsoft.AspNetCore.OData >= 8.0.11",
       "Microsoft.Data.SqlClient >= 5.2.2",
       "Microsoft.EntityFrameworkCore >= 8.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.0",
@@ -4266,6 +4542,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Microsoft.AspNetCore.OData": {
+            "target": "Package",
+            "version": "[8.0.11, )"
+          },
           "Microsoft.Data.SqlClient": {
             "target": "Package",
             "version": "[5.2.2, )"

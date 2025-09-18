@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using OData_CovidDeath.Models;
 using OData_CovidDeath.Services;
 
 namespace OData_CovidDeath.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class CovidDataController : ControllerBase
+    [Route("odata")]
+    public class CovidDataController : ODataController
     {
         private readonly ICovidService _covidService;
 
@@ -15,54 +17,65 @@ namespace OData_CovidDeath.Controllers
             _covidService = covidService;
         }
 
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAll()
+        // Main OData endpoint for CovidData
+        [EnableQuery]
+        [HttpGet("CovidData")]
+        public async Task<IActionResult> GetCovidData()
         {
             var data = await _covidService.GetAllCovidDataAsync();
             return Ok(data);
         }
 
-        [HttpGet("by-date/{date}")]
-        public async Task<IActionResult> GetByDate(DateTime date)
-        {
-            var data = await _covidService.GetCovidDataByDateAsync(date);
-            return Ok(data);
-        }
-
-        [HttpGet("by-country/{country}")]
-        public async Task<IActionResult> GetByCountry(string country)
-        {
-            var data = await _covidService.GetCovidDataByCountryAsync(country);
-            return Ok(data);
-        }
-
-        [HttpGet("summaries")]
+        // OData endpoint for Country Summaries
+        [EnableQuery]
+        [HttpGet("CountrySummaries")]
         public async Task<IActionResult> GetCountrySummaries()
         {
             var summaries = await _covidService.GetCountrySummariesAsync();
             return Ok(summaries);
         }
 
-        [HttpGet("summaries/by-date/{date}")]
-        public async Task<IActionResult> GetCountrySummariesByDate(DateTime date)
+        // Separate OData endpoints for each data type (more efficient)
+        [EnableQuery]
+        [HttpGet("Confirmed")]
+        public async Task<IActionResult> GetConfirmedData()
         {
-            var summaries = await _covidService.GetCountrySummariesByDateAsync(date);
-            return Ok(summaries);
+            var data = await _covidService.GetConfirmedDataAsDictionaryAsync();
+            return Ok(data);
         }
 
-        [HttpGet("summaries/dictionary")]
-        public async Task<IActionResult> GetCountrySummariesAsDictionary()
+        [EnableQuery]
+        [HttpGet("Active")]
+        public async Task<IActionResult> GetActiveData()
         {
-            var summaries = await _covidService.GetCountrySummariesAsDictionaryAsync();
-            return Ok(summaries);
+            var data = await _covidService.GetActiveDataAsDictionaryAsync();
+            return Ok(data);
         }
 
-        [HttpGet("summaries/dictionary/by-date/{date}")]
-        public async Task<IActionResult> GetCountrySummariesByDateAsDictionary(DateTime date)
+        [EnableQuery]
+        [HttpGet("Recovered")]
+        public async Task<IActionResult> GetRecoveredData()
         {
-            var summaries = await _covidService.GetCountrySummariesByDateAsDictionaryAsync(date);
-            return Ok(summaries);
+            var data = await _covidService.GetRecoveredDataAsDictionaryAsync();
+            return Ok(data);
         }
+
+        [EnableQuery]
+        [HttpGet("Deaths")]
+        public async Task<IActionResult> GetDeathsData()
+        {
+            var data = await _covidService.GetDeathsDataAsDictionaryAsync();
+            return Ok(data);
+        }
+
+        [EnableQuery]
+        [HttpGet("Daily")]
+        public async Task<IActionResult> GetDailyData()
+        {
+            var data = await _covidService.GetDailyIncreaseDataAsDictionaryAsync();
+            return Ok(data);
+        }
+
 
         [HttpGet("debug/countries")]
         public async Task<IActionResult> GetCountriesDebug()
@@ -88,61 +101,6 @@ namespace OData_CovidDeath.Controllers
             return Ok(new { sampleData = sampleData, totalRecords = rawData.Count() });
         }
 
-        // Separate endpoints for each data type (faster queries)
-        [HttpGet("confirmed")]
-        public async Task<IActionResult> GetConfirmedData()
-        {
-            var summaries = await _covidService.GetConfirmedDataAsDictionaryAsync();
-            var confirmedData = summaries.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => new { country = kvp.Key, value = kvp.Value.Confirmed }
-            );
-            return Ok(confirmedData);
-        }
-
-        [HttpGet("active")]
-        public async Task<IActionResult> GetActiveData()
-        {
-            var summaries = await _covidService.GetActiveDataAsDictionaryAsync();
-            var activeData = summaries.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => new { country = kvp.Key, value = kvp.Value.Active }
-            );
-            return Ok(activeData);
-        }
-
-        [HttpGet("recovered")]
-        public async Task<IActionResult> GetRecoveredData()
-        {
-            var summaries = await _covidService.GetRecoveredDataAsDictionaryAsync();
-            var recoveredData = summaries.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => new { country = kvp.Key, value = kvp.Value.Recovered }
-            );
-            return Ok(recoveredData);
-        }
-
-        [HttpGet("deaths")]
-        public async Task<IActionResult> GetDeathsData()
-        {
-            var summaries = await _covidService.GetDeathsDataAsDictionaryAsync();
-            var deathsData = summaries.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => new { country = kvp.Key, value = kvp.Value.Deaths }
-            );
-            return Ok(deathsData);
-        }
-
-        [HttpGet("daily")]
-        public async Task<IActionResult> GetDailyData()
-        {
-            var summaries = await _covidService.GetDailyIncreaseDataAsDictionaryAsync();
-            var dailyData = summaries.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => new { country = kvp.Key, value = kvp.Value.DailyIncrease }
-            );
-            return Ok(dailyData);
-        }
 
         [HttpGet("debug/country/{country}")]
         public async Task<IActionResult> GetCountryDebug(string country)
