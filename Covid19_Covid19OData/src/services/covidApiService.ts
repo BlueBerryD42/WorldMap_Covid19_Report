@@ -39,6 +39,7 @@ class CovidApiService {
 
       const data = await response.json();
       return data.value || data; // OData returns data in 'value' property
+      console.log("Data Retived sucessfully:", data);
     } catch (error) {
       console.error('API call failed:', error);
       throw error;
@@ -78,6 +79,32 @@ class CovidApiService {
   async getCountrySummariesByDateAsDictionary(date: string): Promise<Record<string, CountrySummaryDto>> {
     const url = `${API_BASE_URL}/CovidData/summaries/dictionary/by-date/${date}`;
     return this.fetchWithErrorHandling<Record<string, CountrySummaryDto>>(url);
+  }
+
+  // Individual data type endpoints
+  async getConfirmedData(): Promise<Record<string, { country: string; value: number }>> {
+    const url = `${API_BASE_URL}/CovidData/confirmed`;
+    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+  }
+
+  async getActiveData(): Promise<Record<string, { country: string; value: number }>> {
+    const url = `${API_BASE_URL}/CovidData/active`;
+    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+  }
+
+  async getRecoveredData(): Promise<Record<string, { country: string; value: number }>> {
+    const url = `${API_BASE_URL}/CovidData/recovered`;
+    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+  }
+
+  async getDeathsData(): Promise<Record<string, { country: string; value: number }>> {
+    const url = `${API_BASE_URL}/CovidData/deaths`;
+    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
+  }
+
+  async getDailyData(): Promise<Record<string, { country: string; value: number }>> {
+    const url = `${API_BASE_URL}/CovidData/daily`;
+    return this.fetchWithErrorHandling<Record<string, { country: string; value: number }>>(url);
   }
 
   // OData query methods

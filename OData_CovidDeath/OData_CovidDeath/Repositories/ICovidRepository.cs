@@ -9,6 +9,14 @@ namespace OData_CovidDeath.Repositories
         Task<IEnumerable<CovidDataDto>> GetCovidDataByCountryAsync(string country);
         Task<IEnumerable<CountrySummaryDto>> GetCountrySummariesAsync();
         Task<IEnumerable<CountrySummaryDto>> GetCountrySummariesByDateAsync(DateTime date);
+        
+        // Separate methods for each data type (faster queries)
+        Task<IEnumerable<CountrySummaryDto>> GetConfirmedDataAsync();
+        Task<IEnumerable<CountrySummaryDto>> GetDeathsDataAsync();
+        Task<IEnumerable<CountrySummaryDto>> GetRecoveredDataAsync();
+        Task<IEnumerable<CountrySummaryDto>> GetActiveDataAsync();
+        Task<IEnumerable<CountrySummaryDto>> GetDailyIncreaseDataAsync();
+        
         Task<Location?> GetLocationByCountryAsync(string country);
         Task<IEnumerable<Location>> GetAllLocationsAsync();
         Task<IEnumerable<DailyMetric>> GetDailyMetricsByLocationAsync(int locationId);

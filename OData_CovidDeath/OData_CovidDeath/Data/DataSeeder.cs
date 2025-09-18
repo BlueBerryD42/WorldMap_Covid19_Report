@@ -10,8 +10,11 @@ namespace OData_CovidDeath.Data
             // Check if data already exists
             if (await context.Locations.AnyAsync())
             {
+                Console.WriteLine("Data already exists in database, skipping seeding.");
                 return; // Data already seeded
             }
+            
+            Console.WriteLine("No data found, starting to seed sample data...");
 
             // Seed Locations
             var locations = new List<Location>

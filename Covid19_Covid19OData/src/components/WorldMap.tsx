@@ -28,24 +28,29 @@ const WorldMap: React.FC<WorldMapProps> = ({ dataType = 'confirmed', onDataReady
 
   // Define getColorForValue function that can work with any data
   const getColorForValue = useCallback((value: number, dataType: string, dataSource?: Record<string, CountrySummaryDto>) => {
-    if (value === 0) return '#d3d3d3'; // Grey for no data
+    // Return gray for no data or zero values
+    if (value === 0 || value === null || value === undefined) return '#d3d3d3';
     
     const dataToUse = dataSource || covidData;
     if (Object.keys(dataToUse).length === 0) return '#d3d3d3';
     
-    // Get max value for this data type across all countries
-    const maxValue = Math.max(...Object.values(dataToUse).map((data: CountrySummaryDto) => {
-      switch (dataType) {
-        case 'confirmed': return data.confirmed;
-        case 'deaths': return data.deaths;
-        case 'recovered': return data.recovered;
-        case 'active': return data.active;
-        case 'daily': return data.dailyIncrease;
-        default: return 0;
-      }
-    }));
+    // Get max value for this data type across all countries (excluding zeros)
+    const nonZeroValues = Object.values(dataToUse)
+      .map((data: CountrySummaryDto) => {
+        switch (dataType) {
+          case 'confirmed': return data.confirmed;
+          case 'deaths': return data.deaths;
+          case 'recovered': return data.recovered;
+          case 'active': return data.active;
+          case 'daily': return data.dailyIncrease;
+          default: return 0;
+        }
+      })
+      .filter(val => val > 0);
     
-    if (maxValue === 0) return '#d3d3d3';
+    if (nonZeroValues.length === 0) return '#d3d3d3';
+    
+    const maxValue = Math.max(...nonZeroValues);
     
     // Use logarithmic scaling for better visibility of low values
     const logValue = Math.log10(value + 1);
@@ -58,14 +63,77 @@ const WorldMap: React.FC<WorldMapProps> = ({ dataType = 'confirmed', onDataReady
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }, [covidData]);
 
-  // Fetch COVID-19 data from OData API
+  // Fetch COVID-19 data from OData API based on data type
   useEffect(() => {
     const fetchCovidData = async () => {
       try {
         setLoading(true);
         
-        // Fetch country summaries from OData API
-        const summaries = await covidApiService.getCountrySummariesAsDictionary();
+        // Fetch data based on the selected data type
+        let dataResponse: Record<string, { country: string; value: number }> = {};
+        
+        switch (dataType) {
+          case 'confirmed':
+            dataResponse = await covidApiService.getConfirmedData();
+            break;
+          case 'active':
+            dataResponse = await covidApiService.getActiveData();
+            break;
+          case 'recovered':
+            dataResponse = await covidApiService.getRecoveredData();
+            break;
+          case 'deaths':
+            dataResponse = await covidApiService.getDeathsData();
+            break;
+          case 'daily':
+            dataResponse = await covidApiService.getDailyData();
+            break;
+          default:
+            dataResponse = await covidApiService.getConfirmedData();
+        }
+        
+        console.log(`API Response for ${dataType} - Total countries:`, Object.keys(dataResponse).length);
+        console.log(`API Response for ${dataType} - Country names:`, Object.keys(dataResponse));
+        console.log(`API Response for ${dataType} - US data:`, dataResponse['US']);
+        console.log(`API Response for ${dataType} - Sample data:`, Object.entries(dataResponse).slice(0, 5));
+        
+        // Convert to the expected format
+        const summaries: Record<string, CountrySummaryDto> = {};
+        let hasData = false;
+        
+        Object.entries(dataResponse).forEach(([country, data]) => {
+          const value = data.value;
+          
+          // Check if this country has actual data (not zero)
+          if (value > 0) {
+            hasData = true;
+          }
+          
+          summaries[country] = {
+            country: data.country,
+            confirmed: dataType === 'confirmed' ? value : 0,
+            active: dataType === 'active' ? value : 0,
+            recovered: dataType === 'recovered' ? value : 0,
+            deaths: dataType === 'deaths' ? value : 0,
+            dailyIncrease: dataType === 'daily' ? value : 0
+          };
+        });
+        
+        // Log if no data is available
+        if (!hasData) {
+          console.log(`No data available for ${dataType} data type`);
+          console.log('All values are zero or empty');
+        } else {
+          console.log(`Successfully loaded ${dataType} data with ${Object.keys(summaries).length} countries`);
+          console.log(`Countries with data:`, Object.entries(summaries).filter(([_, data]) => {
+            const value = dataType === 'confirmed' ? data.confirmed : 
+                         dataType === 'active' ? data.active :
+                         dataType === 'recovered' ? data.recovered :
+                         dataType === 'deaths' ? data.deaths :
+                         dataType === 'daily' ? data.dailyIncrease : 0;
+            return value > 0;
+          }).map(([country, _]) => country));
+        }
         
         setCovidData(summaries);
         setLoading(false);
@@ -82,7 +150,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ dataType = 'confirmed', onDataReady
           onDataReady(summaries, colorFunction);
         }
       } catch (error) {
-        console.error('Error fetching COVID data from OData API:', error);
+        console.error(`Error fetching ${dataType} data from API:`, error);
+        console.log(`Failed to load ${dataType} data - using empty data`);
         setLoading(false);
         
         // Fallback to empty data
@@ -97,27 +166,123 @@ const WorldMap: React.FC<WorldMapProps> = ({ dataType = 'confirmed', onDataReady
     };
     
     fetchCovidData();
-  }, []);
+  }, [dataType]);
 
   const getCountryData = (countryName: string): CountrySummaryDto => {
-    // Try to match country names with different variations
+    // Create a comprehensive list of variations to try
     const variations = [
       countryName,
-      countryName.replace('United States of America', 'US'),
-      countryName.replace('US', 'United States of America'),
-      countryName.replace('United Kingdom', 'UK'),
-      countryName.replace('UK', 'United Kingdom'),
-      countryName.replace('South Korea', 'Korea, South'),
-      countryName.replace('Korea, South', 'South Korea'),
-      countryName.replace('Antarctica', 'Antarctica'),
-      // Add more variations for Antarctica
-      countryName === 'Antarctica' ? 'Antarctica' : countryName,
-      // Try exact match first, then variations
-      countryName.toLowerCase().includes('antarctica') ? 'Antarctica' : countryName
+      // Direct matches
+      countryName.toLowerCase(),
+      countryName.toUpperCase(),
+      // US variations
+      countryName === 'United States of America' ? 'US' : countryName,
+      countryName === 'United States' ? 'US' : countryName,
+      countryName === 'USA' ? 'US' : countryName,
+      countryName === 'US' ? 'United States of America' : countryName,
+      countryName === 'US' ? 'United States' : countryName,
+      // UK variations
+      countryName === 'United Kingdom' ? 'UK' : countryName,
+      countryName === 'UK' ? 'United Kingdom' : countryName,
+      // Korea variations
+      countryName === 'South Korea' ? 'Korea, South' : countryName,
+      countryName === 'Korea, South' ? 'South Korea' : countryName,
+      // Myanmar/Burma variations
+      countryName === 'Myanmar' ? 'Burma' : countryName,
+      countryName === 'Burma' ? 'Myanmar' : countryName,
+      // China variations
+      countryName === 'China' ? 'China' : countryName,
+      // Russia variations
+      countryName === 'Russian Federation' ? 'Russia' : countryName,
+      // Antarctica variations
+      countryName.toLowerCase().includes('antarctica') ? 'Antarctica' : countryName,
+      // Province/State mapping - map provinces to their parent countries
+      countryName === 'Greenland' ? 'Denmark' : countryName,
+      countryName === 'Reunion' ? 'France' : countryName,
+      countryName === 'Guadeloupe' ? 'France' : countryName,
+      countryName === 'Martinique' ? 'France' : countryName,
+      countryName === 'Mayotte' ? 'France' : countryName,
+      countryName === 'French Guiana' ? 'France' : countryName,
+      countryName === 'New Caledonia' ? 'France' : countryName,
+      countryName === 'French Polynesia' ? 'France' : countryName,
+      countryName === 'Saint Barthelemy' ? 'France' : countryName,
+      countryName === 'Saint Pierre and Miquelon' ? 'France' : countryName,
+      countryName === 'St Martin' ? 'France' : countryName,
+      countryName === 'Wallis and Futuna' ? 'France' : countryName,
+      // Canadian provinces
+      countryName === 'Alberta' ? 'Canada' : countryName,
+      countryName === 'British Columbia' ? 'Canada' : countryName,
+      countryName === 'Manitoba' ? 'Canada' : countryName,
+      countryName === 'New Brunswick' ? 'Canada' : countryName,
+      countryName === 'Newfoundland and Labrador' ? 'Canada' : countryName,
+      countryName === 'Northwest Territories' ? 'Canada' : countryName,
+      countryName === 'Nova Scotia' ? 'Canada' : countryName,
+      countryName === 'Nunavut' ? 'Canada' : countryName,
+      countryName === 'Ontario' ? 'Canada' : countryName,
+      countryName === 'Prince Edward Island' ? 'Canada' : countryName,
+      countryName === 'Quebec' ? 'Canada' : countryName,
+      countryName === 'Saskatchewan' ? 'Canada' : countryName,
+      countryName === 'Yukon' ? 'Canada' : countryName,
+      countryName === 'Diamond Princess' ? 'Canada' : countryName,
+      countryName === 'Grand Princess' ? 'Canada' : countryName,
+      countryName === 'Repatriated Travellers' ? 'Canada' : countryName,
+      // Australian states
+      countryName === 'Australian Capital Territory' ? 'Australia' : countryName,
+      countryName === 'New South Wales' ? 'Australia' : countryName,
+      countryName === 'Northern Territory' ? 'Australia' : countryName,
+      countryName === 'Queensland' ? 'Australia' : countryName,
+      countryName === 'South Australia' ? 'Australia' : countryName,
+      countryName === 'Tasmania' ? 'Australia' : countryName,
+      countryName === 'Victoria' ? 'Australia' : countryName,
+      countryName === 'Western Australia' ? 'Australia' : countryName,
+      // Chinese provinces
+      countryName === 'Anhui' ? 'China' : countryName,
+      countryName === 'Beijing' ? 'China' : countryName,
+      countryName === 'Chongqing' ? 'China' : countryName,
+      countryName === 'Fujian' ? 'China' : countryName,
+      countryName === 'Gansu' ? 'China' : countryName,
+      countryName === 'Guangdong' ? 'China' : countryName,
+      countryName === 'Guangxi' ? 'China' : countryName,
+      countryName === 'Guizhou' ? 'China' : countryName,
+      countryName === 'Hainan' ? 'China' : countryName,
+      countryName === 'Hebei' ? 'China' : countryName,
+      countryName === 'Heilongjiang' ? 'China' : countryName,
+      countryName === 'Henan' ? 'China' : countryName,
+      countryName === 'Hong Kong' ? 'China' : countryName,
+      countryName === 'Hubei' ? 'China' : countryName,
+      countryName === 'Hunan' ? 'China' : countryName,
+      countryName === 'Inner Mongolia' ? 'China' : countryName,
+      countryName === 'Jiangsu' ? 'China' : countryName,
+      countryName === 'Jiangxi' ? 'China' : countryName,
+      countryName === 'Jilin' ? 'China' : countryName,
+      countryName === 'Liaoning' ? 'China' : countryName,
+      countryName === 'Macau' ? 'China' : countryName,
+      countryName === 'Ningxia' ? 'China' : countryName,
+      countryName === 'Qinghai' ? 'China' : countryName,
+      countryName === 'Shaanxi' ? 'China' : countryName,
+      countryName === 'Shandong' ? 'China' : countryName,
+      countryName === 'Shanghai' ? 'China' : countryName,
+      countryName === 'Shanxi' ? 'China' : countryName,
+      countryName === 'Sichuan' ? 'China' : countryName,
+      countryName === 'Tianjin' ? 'China' : countryName,
+      countryName === 'Tibet' ? 'China' : countryName,
+      countryName === 'Unknown' ? 'China' : countryName,
+      countryName === 'Xinjiang' ? 'China' : countryName,
+      countryName === 'Yunnan' ? 'China' : countryName,
+      countryName === 'Zhejiang' ? 'China' : countryName,
+      // Danish territories
+      countryName === 'Faroe Islands' ? 'Denmark' : countryName,
+      // Other special cases
+      countryName === 'Diamond Princess' ? 'Diamond Princess' : countryName,
+      countryName === 'MS Zaandam' ? 'MS Zaandam' : countryName,
+      countryName === 'Summer Olympics 2020' ? 'Summer Olympics 2020' : countryName,
+      countryName === 'Winter Olympics 2022' ? 'Winter Olympics 2022' : countryName
     ];
     
+    // Try each variation
     for (const variation of variations) {
       if (covidData[variation]) {
+        console.log(`Found data for ${countryName} using variation: ${variation}`);
         return covidData[variation];
       }
     }
@@ -126,9 +291,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ dataType = 'confirmed', onDataReady
     if (countryName.toLowerCase().includes('antarctica')) {
       const antarcticaData = covidData['Antarctica'] || covidData['antarctica'] || covidData['ANTARCTICA'];
       if (antarcticaData) {
+        console.log(`Found Antarctica data for ${countryName}`);
         return antarcticaData;
       }
     }
+    
+    // Debug: Log unmatched countries and available data
+    console.log(`No data found for country: ${countryName}`);
+    console.log('Available countries:', Object.keys(covidData));
     
     return { 
       country: countryName, 

@@ -83,8 +83,146 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetCountrySummariesAsync()
         {
+            // Get latest date data for each country (fast query)
             var latestDate = await _context.DailyMetrics.MaxAsync(dm => dm.Date);
-            return await GetCountrySummariesByDateAsync(latestDate);
+            
+            var query = from dm in _context.DailyMetrics
+                        join l in _context.Locations on dm.LocationID equals l.LocationID
+                        where dm.Date.Date == latestDate.Date
+                        group dm by l.Country_Region into g
+                        select new CountrySummaryDto
+                        {
+                            Country = g.Key,
+                            Confirmed = g.Max(x => x.Confirmed),
+                            Deaths = g.Max(x => x.Deaths),
+                            Recovered = g.Max(x => x.Recovered),
+                            Active = g.Max(x => x.Active),
+                            DailyIncrease = 0 // Will be calculated separately
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CountrySummaryDto>> GetConfirmedDataAsync()
+        {
+            // Sum all daily values across all dates for each country
+            var query = from dm in _context.DailyMetrics
+                        join l in _context.Locations on dm.LocationID equals l.LocationID
+                        group dm by l.Country_Region into g
+                        select new CountrySummaryDto
+                        {
+                            Country = g.Key,
+                            Confirmed = g.Sum(x => x.Confirmed), // Sum of all daily confirmed cases
+                            Deaths = 0,
+                            Recovered = 0,
+                            Active = 0,
+                            DailyIncrease = 0
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CountrySummaryDto>> GetDeathsDataAsync()
+        {
+            // Sum all daily values across all dates for each country
+            var query = from dm in _context.DailyMetrics
+                        join l in _context.Locations on dm.LocationID equals l.LocationID
+                        group dm by l.Country_Region into g
+                        select new CountrySummaryDto
+                        {
+                            Country = g.Key,
+                            Confirmed = 0,
+                            Deaths = g.Sum(x => x.Deaths), // Sum of all daily deaths
+                            Recovered = 0,
+                            Active = 0,
+                            DailyIncrease = 0
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CountrySummaryDto>> GetRecoveredDataAsync()
+        {
+            // Sum all daily values across all dates for each country
+            var query = from dm in _context.DailyMetrics
+                        join l in _context.Locations on dm.LocationID equals l.LocationID
+                        group dm by l.Country_Region into g
+                        select new CountrySummaryDto
+                        {
+                            Country = g.Key,
+                            Confirmed = 0,
+                            Deaths = 0,
+                            Recovered = g.Sum(x => x.Recovered), // Sum of all daily recovered cases
+                            Active = 0,
+                            DailyIncrease = 0
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CountrySummaryDto>> GetActiveDataAsync()
+        {
+            // Sum all daily values across all dates for each country
+            var query = from dm in _context.DailyMetrics
+                        join l in _context.Locations on dm.LocationID equals l.LocationID
+                        group dm by l.Country_Region into g
+                        select new CountrySummaryDto
+                        {
+                            Country = g.Key,
+                            Confirmed = 0,
+                            Deaths = 0,
+                            Recovered = 0,
+                            Active = g.Sum(x => x.Active), // Sum of all daily active cases
+                            DailyIncrease = 0
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CountrySummaryDto>> GetDailyIncreaseDataAsync()
+        {
+            // Get all data grouped by country for daily increase calculation
+            var countryData = await (from dm in _context.DailyMetrics
+                                   join l in _context.Locations on dm.LocationID equals l.LocationID
+                                   group dm by l.Country_Region into g
+                                   select new
+                                   {
+                                       Country = g.Key,
+                                       DailyMetrics = g.OrderBy(x => x.Date).ToList()
+                                   }).ToListAsync();
+
+            var result = new List<CountrySummaryDto>();
+
+            foreach (var country in countryData)
+            {
+                var metrics = country.DailyMetrics;
+                
+                // Calculate daily increases (current day - previous day)
+                var dailyIncreases = new List<long>();
+                for (int i = 1; i < metrics.Count; i++)
+                {
+                    var currentDay = metrics[i].Confirmed;
+                    var previousDay = metrics[i - 1].Confirmed;
+                    var dailyIncrease = Math.Max(0, currentDay - previousDay);
+                    dailyIncreases.Add(dailyIncrease);
+                }
+
+                // Calculate average daily increase
+                var averageDailyIncrease = dailyIncreases.Count > 0 ? 
+                    (long)dailyIncreases.Average() : 0;
+                
+                result.Add(new CountrySummaryDto
+                {
+                    Country = country.Country,
+                    Confirmed = 0,
+                    Deaths = 0,
+                    Recovered = 0,
+                    Active = 0,
+                    DailyIncrease = averageDailyIncrease
+                });
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<CountrySummaryDto>> GetCountrySummariesByDateAsync(DateTime date)

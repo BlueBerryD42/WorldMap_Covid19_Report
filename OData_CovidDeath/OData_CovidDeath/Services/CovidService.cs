@@ -83,5 +83,36 @@ namespace OData_CovidDeath.Services
             }
             return latestDate.AddDays(-1);
         }
+
+        // Separate methods for each data type (faster queries)
+        public async Task<Dictionary<string, CountrySummaryDto>> GetConfirmedDataAsDictionaryAsync()
+        {
+            var data = await _repository.GetConfirmedDataAsync();
+            return data.ToDictionary(s => s.Country, s => s);
+        }
+
+        public async Task<Dictionary<string, CountrySummaryDto>> GetDeathsDataAsDictionaryAsync()
+        {
+            var data = await _repository.GetDeathsDataAsync();
+            return data.ToDictionary(s => s.Country, s => s);
+        }
+
+        public async Task<Dictionary<string, CountrySummaryDto>> GetRecoveredDataAsDictionaryAsync()
+        {
+            var data = await _repository.GetRecoveredDataAsync();
+            return data.ToDictionary(s => s.Country, s => s);
+        }
+
+        public async Task<Dictionary<string, CountrySummaryDto>> GetActiveDataAsDictionaryAsync()
+        {
+            var data = await _repository.GetActiveDataAsync();
+            return data.ToDictionary(s => s.Country, s => s);
+        }
+
+        public async Task<Dictionary<string, CountrySummaryDto>> GetDailyIncreaseDataAsDictionaryAsync()
+        {
+            var data = await _repository.GetDailyIncreaseDataAsync();
+            return data.ToDictionary(s => s.Country, s => s);
+        }
     }
 }
