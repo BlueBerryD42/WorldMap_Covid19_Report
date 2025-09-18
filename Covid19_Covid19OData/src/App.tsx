@@ -43,23 +43,25 @@ function App() {
         </div>
 
         <div className="main-content">
-          <div className="map-section">
-            <WorldMap dataType={selectedDataType} onDataReady={handleDataReady} />
+          <div className="top-row">
+            <div className="map-section">
+              <WorldMap dataType={selectedDataType} onDataReady={handleDataReady} />
+            </div>
+            
+            {getColorForValue && Object.keys(covidData).length > 0 && (
+              <div className="legend-section">
+                <ColorLegend 
+                  dataType={selectedDataType} 
+                  covidData={covidData} 
+                  getColorForValue={getColorForValue} 
+                />
+              </div>
+            )}
           </div>
           
-          {getColorForValue && Object.keys(covidData).length > 0 && (
-            <div className="legend-section">
-              <ColorLegend 
-                dataType={selectedDataType} 
-                covidData={covidData} 
-                getColorForValue={getColorForValue} 
-              />
-            </div>
-          )}
-        </div>
-        <div className="treemap-section">
-          <h2 className="treemap-title">Country Breakdown (Confirmed Cases)</h2>
-          <TreemapChart />
+          <div className="treemap-section">
+            <TreemapChart />
+          </div>
         </div>
       </div>
     </div>

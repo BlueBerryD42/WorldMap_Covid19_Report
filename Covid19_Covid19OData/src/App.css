@@ -78,10 +78,17 @@
   width: 100%;
   flex: 1;
   display: flex;
+  flex-direction: column;
   gap: 20px;
   min-height: 0;
-  padding-bottom: 20px;
-  overflow: visible;
+  overflow-y: auto;
+}
+
+.top-row {
+  display: flex;
+  gap: 20px;
+  flex: 0 0 auto;
+  min-height: 400px;
 }
 
 .map-section {
@@ -93,8 +100,8 @@
   border-radius: 10px;
   overflow: hidden;
   padding: 15px;
-  margin-bottom: 10px;
   box-sizing: border-box;
+  min-height: 0;
 }
 
 .legend-section {
@@ -103,6 +110,25 @@
   justify-content: center;
   align-items: flex-start;
   padding-top: 20px;
+  min-height: 0;
+}
+
+.treemap-section {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 2px solid #333;
+  margin-top: 0;
+}
+
+.treemap-title {
+  text-align: center;
+  color: #333;
+  font-size: 1.5em;
+  margin: 0 0 20px 0;
 }
 
 .logo {
