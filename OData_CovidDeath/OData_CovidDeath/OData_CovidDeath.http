@@ -1,0 +1,6 @@
+@OData_CovidDeath_HostAddress = http://localhost:5236
+
+GET {{OData_CovidDeath_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

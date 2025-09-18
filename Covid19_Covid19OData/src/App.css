@@ -1,0 +1,231 @@
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* COVID Dashboard Styles */
+.covid-dashboard {
+  width: 100%;
+  height: 100vh;
+  background: rgb(0, 0, 0);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container {
+  background: white;
+  padding: 20px 20px 30px 20px;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.dashboard-title {
+  text-align: center;
+  color: #000;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  flex-shrink: 0;
+}
+
+.data-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.data-button {
+  padding: 8px 16px !important;
+  border: 2px solid #333 !important;
+  background: white !important;
+  color: #333 !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: inherit !important;
+}
+
+.data-button:hover {
+  border-color: #000 !important;
+  color: #000 !important;
+  background: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.data-button.active {
+  background: #000 !important;
+  color: white !important;
+  border-color: #000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.main-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  min-height: 0;
+  padding-bottom: 20px;
+  overflow: visible;
+}
+
+.map-section {
+  flex: 0 0 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.legend-section {
+  flex: 0 0 25%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* World Map Styles */
+.world-map-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  overflow: hidden;
+}
+
+.world-map-container svg {
+  width: 100%;
+  height: auto;
+  max-height: 100vh;
+  aspect-ratio: 2 / 1;
+}
+
+.map-tooltip {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: tooltipFadeIn 0.2s ease-in-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selected-country-info {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 250px;
+}
+
+.selected-country-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.selected-country-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.selected-country-info button {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.selected-country-info button:hover {
+  background: #ff5252;
+}
+
+/* Map container responsive */
+@media (max-width: 768px) {
+  .world-map-container {
+    padding: 10px;
+  }
+  
+  .world-map-container svg {
+    width: 100%;
+    height: auto;
+  }
+}
