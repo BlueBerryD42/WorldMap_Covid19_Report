@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import WorldMap from './components/WorldMap'
 import ColorLegend from './components/ColorLegend'
+import TreemapChart from './components/TreemapChart'
 import type { CountrySummaryDto } from './services/covidApiService'
 import './App.css'
 
@@ -55,6 +56,10 @@ function App() {
               />
             </div>
           )}
+        </div>
+        <div className="treemap-section">
+          <h2 className="treemap-title">Country Breakdown (Confirmed Cases)</h2>
+          <TreemapChart />
         </div>
       </div>
     </div>

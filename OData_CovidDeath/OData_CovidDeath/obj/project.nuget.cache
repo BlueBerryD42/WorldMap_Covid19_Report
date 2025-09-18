@@ -2,7 +2,7 @@
   "version": 2,
   "dgSpecHash": "U+rpJaR7d14=",
   "success": true,
-  "projectFilePath": "C:\\Users\\syrex\\Desktop\\ODataDeath\\OData_CovidDeath\\OData_CovidDeath\\OData_CovidDeath.csproj",
+  "projectFilePath": "C:\\Users\\Administrator\\Desktop\\WorldMap_Covid19_Report\\OData_CovidDeath\\OData_CovidDeath\\OData_CovidDeath.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\syrex\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\syrex\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
