@@ -105,14 +105,17 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetConfirmedDataAsync()
         {
-            // Sum all daily values across all dates for each country, only return countries with data
+            // Get the latest confirmed values for each country
+            var latestDate = await _context.DailyMetrics.MaxAsync(dm => dm.Date);
+            
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
+                        where dm.Date == latestDate
                         group dm by l.Country_Region into g
                         select new CountrySummaryDto
                         {
                             Country = g.Key,
-                            Confirmed = g.Sum(x => x.Confirmed),
+                            Confirmed = g.Sum(x => x.Confirmed), // Sum across provinces for same country
                             Deaths = 0,
                             Recovered = 0,
                             Active = 0,
@@ -127,15 +130,18 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetDeathsDataAsync()
         {
-            // Sum all daily values across all dates for each country, only return countries with data
+            // Get the latest deaths values for each country
+            var latestDate = await _context.DailyMetrics.MaxAsync(dm => dm.Date);
+            
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
+                        where dm.Date == latestDate
                         group dm by l.Country_Region into g
                         select new CountrySummaryDto
                         {
                             Country = g.Key,
                             Confirmed = 0,
-                            Deaths = g.Sum(x => x.Deaths),
+                            Deaths = g.Sum(x => x.Deaths), // Sum across provinces for same country
                             Recovered = 0,
                             Active = 0,
                             DailyIncrease = 0
@@ -149,7 +155,7 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetRecoveredDataAsync()
         {
-            // Sum all daily values across all dates for each country, only return countries with data
+            // Get the maximum recovered values for each country
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
                         group dm by l.Country_Region into g
@@ -158,7 +164,7 @@ namespace OData_CovidDeath.Repositories
                             Country = g.Key,
                             Confirmed = 0,
                             Deaths = 0,
-                            Recovered = g.Sum(x => x.Recovered),
+                            Recovered = g.Max(x => x.Recovered), // Maximum recovered value
                             Active = 0,
                             DailyIncrease = 0
                         };
@@ -171,9 +177,12 @@ namespace OData_CovidDeath.Repositories
 
         public async Task<IEnumerable<CountrySummaryDto>> GetActiveDataAsync()
         {
-            // Sum all daily values across all dates for each country, only return countries with data
+            // Get the latest active values for each country
+            var latestDate = await _context.DailyMetrics.MaxAsync(dm => dm.Date);
+            
             var query = from dm in _context.DailyMetrics
                         join l in _context.Locations on dm.LocationID equals l.LocationID
+                        where dm.Date == latestDate
                         group dm by l.Country_Region into g
                         select new CountrySummaryDto
                         {
@@ -181,7 +190,7 @@ namespace OData_CovidDeath.Repositories
                             Confirmed = 0,
                             Deaths = 0,
                             Recovered = 0,
-                            Active = g.Sum(x => x.Active),
+                            Active = g.Sum(x => x.Active), // Sum across provinces for same country
                             DailyIncrease = 0
                         };
 
